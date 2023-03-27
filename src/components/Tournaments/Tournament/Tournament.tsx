@@ -62,6 +62,7 @@ const Container = styled(ContainerST)`
   width: 272px;
   min-height: 160px;
   padding: ${theme.spacing(4)};
+  border-radius: ${theme.spacing(1)};
   margin: 0;
   background-color: ${theme.palette.background.base};
 

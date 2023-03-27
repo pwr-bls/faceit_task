@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider, useDispatch } from 'react-redux';
 import GlobalStyle from './GlobalStyle';
@@ -10,7 +10,6 @@ import { fetchTouramentsData } from './constants/api';
 import {
   addTournaments,
   errorTournament,
-  ITournament,
   loadTournament,
 } from './actions/tournaments';
 import Tournaments from './components/Tournaments/Tournaments';
@@ -18,32 +17,24 @@ import Tournaments from './components/Tournaments/Tournaments';
 const App = () => {
   const [search, setSearch] = useState<string>('');
   const dispatch = useDispatch();
-  const fetchData = (search: string) => {
+  const fetchData = useCallback(() => {
     dispatch(loadTournament());
-    fetchTouramentsData()
-      .then((data) =>
-        dispatch(
-          addTournaments(
-            data.filter((item: ITournament) =>
-              item.name.toLowerCase().includes(search)
-            )
-          )
-        )
-      )
+    fetchTouramentsData(search)
+      .then((data) => dispatch(addTournaments(data)))
       .catch(() => {
         dispatch(errorTournament());
       });
-  };
+  }, [search]);
 
   useEffect(() => {
-    fetchData(search);
-  }, [search]);
+    fetchData();
+  }, [fetchData]);
 
   return (
     <Container>
       <H4>FACEIT Tournaments</H4>
       <FilterBar onSearch={setSearch} />
-      <Tournaments onRetry={() => fetchData(search)} />
+      <Tournaments onRetry={fetchData} />
     </Container>
   );
 };

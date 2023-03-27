@@ -11,6 +11,10 @@ import H6 from '../../H6';
 import { format } from 'date-fns';
 import Button from '../../Button';
 import { useDispatch } from 'react-redux';
+import {
+  deleteTournament,
+  updateTournament as apiUpdateTournament,
+} from '../../../constants/api';
 
 type TournamentProps = {
   tournament: ITournament;
@@ -18,7 +22,9 @@ type TournamentProps = {
 const Tournament = ({ tournament }: TournamentProps) => {
   const dispatch = useDispatch();
   const handleDelete = () => {
-    dispatch(removeTournament(tournament));
+    deleteTournament(tournament.id!).then(() => {
+      dispatch(removeTournament(tournament));
+    });
   };
 
   const handleUpdate = () => {
@@ -26,7 +32,9 @@ const Tournament = ({ tournament }: TournamentProps) => {
     if (!name) {
       return;
     }
-    dispatch(updateTournament({ ...tournament, name: name! }));
+    apiUpdateTournament(tournament.id!, name).then(() => {
+      dispatch(updateTournament({ ...tournament, name: name! }));
+    });
   };
 
   return (
